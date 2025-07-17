@@ -4,9 +4,6 @@ import type { NextRequest } from 'next/server';
 // Public routes that don't require authentication (HANYA login dan API)
 const publicRoutes = ['/login', '/api/auth/login', '/api/create-admin'];
 
-// Protected routes that definitely need authentication (SEMUA selain login)
-const protectedRoutes = ['/', '/setting', '/reports', '/member'];
-
 // Routes that require specific roles
 const roleBasedRoutes = {
   '/setting/operator': ['administrator'],
@@ -26,17 +23,18 @@ export function middleware(request: NextRequest) {
     pathname.includes('.') ||
     (pathname.startsWith('/api') && !pathname.startsWith('/api/auth'))
   ) {
+    console.log('⏭️ Skipping static/API route:', pathname);
     return NextResponse.next();
   }
 
-  // Allow access to public routes (hanya login dan API auth)
+  // Allow access to public routes (hanya login dan API auth) - RETURN EARLY
   if (publicRoutes.includes(pathname)) {
-    console.log('✅ Public route allowed:', pathname);
+    console.log('✅ Public route allowed, no auth check:', pathname);
     return NextResponse.next();
   }
 
   // SEMUA route lainnya memerlukan authentication
-  console.log('🔒 Checking authentication for:', pathname);
+  console.log('🔒 Checking authentication for protected route:', pathname);
   
   // Check for authentication - look in both cookies and headers
   const authTokenFromCookie = request.cookies.get('authToken')?.value;
@@ -46,7 +44,7 @@ export function middleware(request: NextRequest) {
   console.log('🔍 Auth token found:', !!authToken);
 
   if (!authToken) {
-    console.log('❌ No auth token, redirecting to login');
+    console.log('❌ No auth token, redirecting to login from:', pathname);
     // Redirect to login if not authenticated
     const loginUrl = new URL('/login', request.url);
     return NextResponse.redirect(loginUrl);
