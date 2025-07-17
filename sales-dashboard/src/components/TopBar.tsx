@@ -45,9 +45,11 @@ export default function TopBar() {
   };
 
   const getRoleDisplayName = (role: string) => {
+    console.log('🎭 TopBar getRoleDisplayName - Input role:', role, 'Type:', typeof role);
+    
     switch (role) {
       case 'administrator':
-        return 'Administrator';
+        return 'System Administrator';
       case 'manager':
         return 'Manager';
       case 'operator':
@@ -57,6 +59,7 @@ export default function TopBar() {
       case 'viewer':
         return 'Viewer';
       default:
+        console.warn('🎭 TopBar - Unknown role:', role);
         return role;
     }
   };

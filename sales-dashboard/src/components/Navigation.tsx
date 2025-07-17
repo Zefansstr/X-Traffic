@@ -31,6 +31,19 @@ export default function Navigation() {
     window.dispatchEvent(new CustomEvent('sidebarToggled'));
   }, [isCollapsed]);
 
+  // DEBUG: Log user data when it changes
+  useEffect(() => {
+    if (currentUser) {
+      console.log('🐛 =============== NAVIGATION DEBUG START ===============');
+      console.log('🔍 Current User Object:', JSON.stringify(currentUser, null, 2));
+      console.log('🔍 User Role (raw):', currentUser.role);
+      console.log('🔍 User Role Type:', typeof currentUser.role);
+      console.log('🔍 User Full Name:', currentUser.full_name);
+      console.log('🔍 User Username:', currentUser.username);
+      console.log('🐛 =============== NAVIGATION DEBUG END ===============');
+    }
+  }, [currentUser]);
+
   // Define navigation array - same every render
   const navigation = [
     { 
@@ -83,15 +96,27 @@ export default function Navigation() {
   };
 
   const canAccess = (menuKey: string) => {
+    console.log('🔍 ============= canAccess DEBUG START =============');
+    console.log('🔍 Checking access for menu:', menuKey);
+    console.log('🔍 Current user exists:', !!currentUser);
+    
     if (!currentUser || !currentUser.role) {
+      console.log('🚫 No user or role, denying access');
+      console.log('🔍 ============= canAccess DEBUG END =============');
       return false;
     }
     
+    console.log('🔍 User role for menu check:', currentUser.role);
+    console.log('🔍 Menu key:', menuKey);
+    
     try {
       const hasAccess = canUserAccessMenu(currentUser.role, menuKey as any);
+      console.log('🔍 Menu access result:', hasAccess);
+      console.log('🔍 ============= canAccess DEBUG END =============');
       return hasAccess;
     } catch (error) {
       console.error('🚨 Error checking menu access:', error);
+      console.log('🔍 ============= canAccess DEBUG END =============');
       return false;
     }
   };
@@ -158,13 +183,29 @@ export default function Navigation() {
           </div>
         ) : currentUser ? (
           (() => {
-            const filteredNavigation = navigation.filter(item => canAccess(item.menuKey));
+            console.log('🎯 ========== MENU FILTERING DEBUG START ==========');
+            console.log('🎯 Available navigation items:', navigation.map(item => item.menuKey));
+            
+            const filteredNavigation = navigation.filter(item => {
+              const hasAccess = canAccess(item.menuKey);
+              console.log(`🎯 Menu "${item.name}" (${item.menuKey}) - Access: ${hasAccess}`);
+              return hasAccess;
+            });
+            
+            console.log('🎯 Filtered navigation items:', filteredNavigation.map(item => item.menuKey));
+            console.log('🎯 ========== MENU FILTERING DEBUG END ==========');
             
             if (filteredNavigation.length === 0) {
               return !isCollapsed ? (
                 <div className="text-center py-8">
                   <div className="text-red-500 text-sm">
                     🚨 No menu items accessible for role: {currentUser.role}
+                  </div>
+                  <div className="text-xs text-gray-500 mt-2">
+                    User: {currentUser.username}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    Role: {JSON.stringify(currentUser.role)}
                   </div>
                 </div>
               ) : null;
