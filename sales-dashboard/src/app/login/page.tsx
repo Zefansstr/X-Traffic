@@ -92,80 +92,71 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-blue-900/20 via-purple-900/30 to-slate-900/40"></div>
-      <div className="absolute inset-0" style={{
-        backgroundImage: `radial-gradient(circle at 25% 25%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-                         radial-gradient(circle at 75% 75%, rgba(255, 119, 198, 0.3) 0%, transparent 50%)`,
-      }}></div>
-      
-      {/* Geometric patterns */}
-      <div className="absolute top-20 left-20 w-32 h-32 border border-white/10 rotate-45"></div>
-      <div className="absolute bottom-20 right-20 w-24 h-24 border border-white/10 rotate-12"></div>
-      <div className="absolute top-1/2 left-10 w-16 h-16 border border-white/10 rotate-45"></div>
-      
-      {/* Main Content */}
-      <div className="relative z-10 w-full max-w-md mx-auto px-6">
-        {/* Logo and Title */}
-        <div className="text-center mb-8">
-          {/* Logo */}
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl mb-6 shadow-2xl">
-            <div className="text-white text-3xl font-bold transform -skew-x-12">
-              A
-            </div>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        {/* Header */}
+        <div className="text-center">
+          <div className="mx-auto h-16 w-16 bg-blue-600 rounded-xl flex items-center justify-center mb-6">
+            <span className="text-white text-2xl font-bold">X</span>
           </div>
-          
-          {/* Title */}
-          <h1 className="text-white text-xl font-medium tracking-wider">
-            OPERATOR PORTAL
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">X-Traffic</h1>
+          <p className="text-gray-600">Sign in to your account</p>
         </div>
 
         {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           {/* Error Message */}
           {error && (
-            <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-red-300 text-sm text-center">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-600 text-sm">
               {error}
             </div>
           )}
 
-          {/* Username Input */}
-          <div>
-            <input
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              required
-              placeholder="Username"
-              className="w-full px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-            />
-          </div>
+          <div className="space-y-4">
+            {/* Username Input */}
+            <div>
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+                Username
+              </label>
+              <input
+                id="username"
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                required
+                placeholder="Enter your username"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+              />
+            </div>
 
-          {/* Password Input */}
-          <div>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              placeholder="••••••••••"
-              className="w-full px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-            />
+            {/* Password Input */}
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                placeholder="Enter your password"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+              />
+            </div>
           </div>
 
           {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-medium rounded-full hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-transparent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-xl"
+            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {loading ? (
-              <span className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <span className="flex items-center">
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
@@ -177,15 +168,32 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Demo Accounts Info */}
-        <div className="mt-8 p-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10">
-          <h3 className="text-white/80 text-sm font-medium mb-3">Demo Accounts:</h3>
-          <div className="space-y-1 text-xs text-white/60">
-            <div>Administrator: admin / admin123</div>
-            <div>Manager: manager / manager123</div>
-            <div>Operator: operator / operator123</div>
-            <div>User: user1 / user123</div>
-            <div>Viewer: viewer / viewer123</div>
+        {/* Demo Accounts */}
+        <div className="mt-8">
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <h3 className="text-sm font-medium text-gray-900 mb-3">Demo Accounts:</h3>
+            <div className="space-y-1 text-xs text-gray-600">
+              <div className="flex justify-between">
+                <span>Administrator:</span>
+                <span className="font-mono">admin / admin123</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Manager:</span>
+                <span className="font-mono">manager / manager123</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Operator:</span>
+                <span className="font-mono">operator / operator123</span>
+              </div>
+              <div className="flex justify-between">
+                <span>User:</span>
+                <span className="font-mono">user1 / user123</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Viewer:</span>
+                <span className="font-mono">viewer / viewer123</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
