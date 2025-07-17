@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// Public routes that don't require authentication (HANYA login dan API)
-const publicRoutes = ['/login', '/api/auth/login', '/api/create-admin'];
+// Public routes that don't require authentication
+const publicRoutes = ['/login'];
 
 // Routes that require specific roles
 const roleBasedRoutes = {
@@ -14,29 +14,34 @@ const roleBasedRoutes = {
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
-  console.log('🔒 Middleware checking:', pathname);
+  // Normalize pathname - remove trailing slash for consistency
+  const normalizedPath = pathname.endsWith('/') && pathname !== '/' ? pathname.slice(0, -1) : pathname;
   
-  // Skip middleware for static files and API routes (except auth)
+  console.log('🔒 Middleware checking:', pathname, 'normalized:', normalizedPath);
+  
+  // Skip middleware for specific paths that should never be processed
   if (
     pathname.startsWith('/_next') ||
+    pathname.startsWith('/_vercel') ||
+    pathname.startsWith('/api') ||
     pathname.startsWith('/static') ||
-    pathname.includes('.') ||
-    (pathname.startsWith('/api') && !pathname.startsWith('/api/auth'))
+    pathname.includes('favicon') ||
+    pathname.includes('.') && !pathname.endsWith('/')
   ) {
-    console.log('⏭️ Skipping static/API route:', pathname);
+    console.log('⏭️ Skipping middleware for static/API route:', pathname);
     return NextResponse.next();
   }
 
-  // Allow access to public routes (hanya login dan API auth) - RETURN EARLY
-  if (publicRoutes.includes(pathname)) {
-    console.log('✅ Public route allowed, no auth check:', pathname);
+  // Allow access to public routes - check both original and normalized paths
+  if (publicRoutes.includes(pathname) || publicRoutes.includes(normalizedPath)) {
+    console.log('✅ Public route allowed:', pathname);
     return NextResponse.next();
   }
 
-  // SEMUA route lainnya memerlukan authentication
+  // For all other routes, check authentication
   console.log('🔒 Checking authentication for protected route:', pathname);
   
-  // Check for authentication - look in both cookies and headers
+  // Check for authentication token
   const authTokenFromCookie = request.cookies.get('authToken')?.value;
   const authTokenFromHeader = request.headers.get('authorization')?.replace('Bearer ', '');
   const authToken = authTokenFromCookie || authTokenFromHeader;
@@ -45,12 +50,15 @@ export function middleware(request: NextRequest) {
 
   if (!authToken) {
     console.log('❌ No auth token, redirecting to login from:', pathname);
-    // Redirect to login if not authenticated
-    const loginUrl = new URL('/login', request.url);
-    return NextResponse.redirect(loginUrl);
+    // Only redirect if not already on login page to prevent loops
+    if (normalizedPath !== '/login') {
+      const loginUrl = new URL('/login', request.url);
+      return NextResponse.redirect(loginUrl);
+    }
+    return NextResponse.next();
   }
 
-  // Simple token validation (in production, use proper JWT validation)
+  // Simple token validation
   try {
     // For now, we'll trust the token exists
     // In production, decode and validate JWT token here
@@ -59,9 +67,6 @@ export function middleware(request: NextRequest) {
     for (const [route, allowedRoles] of Object.entries(roleBasedRoutes)) {
       if (pathname.startsWith(route)) {
         // For now, allow access if token exists
-        // In production: if (!allowedRoles.includes(userRole)) {
-        //   return NextResponse.redirect(new URL('/', request.url));
-        // }
         break;
       }
     }
@@ -70,9 +75,12 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   } catch (error) {
     console.log('❌ Token validation failed, redirecting to login');
-    // Invalid token, redirect to login
-    const loginUrl = new URL('/login', request.url);
-    return NextResponse.redirect(loginUrl);
+    // Only redirect if not already on login page
+    if (normalizedPath !== '/login') {
+      const loginUrl = new URL('/login', request.url);
+      return NextResponse.redirect(loginUrl);
+    }
+    return NextResponse.next();
   }
 }
 
@@ -84,7 +92,8 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
+     * - public files with extensions
      */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.).*)',
   ],
 }; 
