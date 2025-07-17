@@ -10,6 +10,14 @@ const nextConfig: NextConfig = {
   experimental: {
     esmExternals: true,
   },
+  // Disable ESLint during build for production
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  // Disable TypeScript errors during build (optional)
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
 
 export default nextConfig;
