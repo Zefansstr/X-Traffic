@@ -1,7 +1,6 @@
 'use client';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePathname } from 'next/navigation';
-import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
 import { LogoutIcon, AddUserIcon } from './Icons';
 
@@ -10,9 +9,6 @@ export default function TopBar() {
   const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Derive simple breadcrumb from pathname
-  const breadcrumb = pathname === '/' ? 'Dashboard' : pathname.replace(/\//g, ' ').replace(/[,]/g, '').trim();
 
   // Close dropdown when clicking outside
   useEffect(() => {

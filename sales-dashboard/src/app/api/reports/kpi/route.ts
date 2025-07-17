@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import connectDB from '@/lib/database'
-import { Sales } from '@/lib/models/Sales'
+import { Sale } from '@/lib/models/Sales'
 import { calculateKPIScore } from '@/lib/utils/commission'
 
 export async function GET(request: NextRequest) {
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     // Set end date to end of day
     end.setHours(23, 59, 59, 999)
     
-    const sales = await Sales.find({
+    const sales = await Sale.find({
       date: { $gte: start, $lte: end },
       status: 'closed'
     }).populate('staffId')
