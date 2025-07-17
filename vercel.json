@@ -1,3 +1,14 @@
 {
-  "rootDirectory": "sales-dashboard"
+  "builds": [
+    {
+      "src": "sales-dashboard/package.json",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/sales-dashboard/$1"
+    }
+  ]
 }
