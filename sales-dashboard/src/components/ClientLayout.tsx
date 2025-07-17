@@ -11,9 +11,12 @@ interface ClientLayoutProps {
 
 export default function ClientLayout({ children }: ClientLayoutProps) {
   const pathname = usePathname();
-  const isLoginPage = pathname === '/login';
+  
+  // Multiple checks untuk login page
+  const isLoginPage = pathname === '/login' || pathname.includes('/login') || pathname.endsWith('/login');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
+  // PENTING: Semua hooks harus dipanggil sebelum conditional return
   // Listen for sidebar toggle events from Navigation component
   useEffect(() => {
     const handleSidebarToggle = () => {
@@ -28,25 +31,40 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     };
   }, []);
 
+  // Debug log yang lebih detail
+  console.log('🔍 ClientLayout Debug:', { 
+    pathname, 
+    isLoginPage,
+    pathIncludes: pathname.includes('/login'),
+    pathEquals: pathname === '/login',
+    pathEndsWith: pathname.endsWith('/login')
+  });
+
+  // Conditional rendering SETELAH semua hooks dipanggil
+  if (isLoginPage) {
+    console.log('🚪 LOGIN PAGE - NO LAYOUT');
+    return (
+      <div className="login-page-wrapper">
+        {children}
+      </div>
+    );
+  }
+
+  console.log('🏠 DASHBOARD PAGE - FULL LAYOUT');
   return (
     <>
-      {/* Jangan tampilkan Navigation di halaman login */}
-      {!isLoginPage && <Navigation />}
+      <Navigation />
       
       {/* Content dengan conditional margin yang dinamis */}
-      <div className={isLoginPage ? '' : sidebarCollapsed ? 'ml-20' : 'ml-64'} style={{ transition: 'margin-left 0.3s ease' }}>
-        {!isLoginPage && <TopBar />}
-        {isLoginPage ? (
-          children
-        ) : (
-          <div className="p-3 min-h-[calc(100vh-4rem)]">
-            {children}
-          </div>
-        )}
+      <div className={sidebarCollapsed ? 'ml-20' : 'ml-64'} style={{ transition: 'margin-left 0.3s ease' }}>
+        <TopBar />
+        <div className="p-3 min-h-[calc(100vh-4rem)]">
+          {children}
+        </div>
       </div>
 
       {/* Global New Customer Modal - available on all pages */}
-      {!isLoginPage && <GlobalNewCustomerModal />}
+      <GlobalNewCustomerModal />
     </>
   );
 } 

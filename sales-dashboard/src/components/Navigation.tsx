@@ -212,7 +212,7 @@ export default function Navigation() {
       <div className="flex items-center justify-between border-b border-gray-200" style={{ height: '56px' }}>
         <div className={`flex items-center space-x-2 ${isCollapsed ? 'pl-2' : 'pl-4'}`}>
           {/* Logo with just X - Always visible */}
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-soft">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-soft">
             <span className="text-base font-extrabold -skew-x-12 text-white">X</span>
           </div>
           {/* Text Traffic - Only show when expanded */}
