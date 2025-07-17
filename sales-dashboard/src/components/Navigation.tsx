@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { canUserAccessMenu, type User } from '../lib/models/User';
+import { useAuth } from '../lib/hooks/useAuth';
 import { 
   DashboardIcon, 
   MemberIcon, 
@@ -14,62 +15,26 @@ import {
   LoginIcon 
 } from './Icons';
 
-interface NavigationUser {
-  id: string;
-  username: string;
-  role: 'administrator' | 'manager' | 'operator' | 'user' | 'viewer';
-  full_name: string;
-}
-
 export default function Navigation() {
   const pathname = usePathname();
-  const [currentUser, setCurrentUser] = useState<NavigationUser | null>(null);
+  const { user: currentUser, loading, logout } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    const checkAuth = () => {
-      try {
-        const userData = localStorage.getItem('authUser') || localStorage.getItem('user');
-        if (userData) {
-          const parsedUser = JSON.parse(userData);
-          console.log('🔐 Navigation - Current user:', parsedUser);
-          setCurrentUser(parsedUser);
-        } else {
-          console.log('🔐 Navigation - No user found');
-          setCurrentUser(null);
-        }
-      } catch (error) {
-        console.error('🔐 Navigation - Error parsing user data:', error);
-        setCurrentUser(null);
-      }
-    };
-
-    // Check auth on mount
-    checkAuth();
     setIsClient(true);
-
-    // Listen for auth state changes
-    const handleAuthStateChange = () => {
-      console.log('🔐 Navigation - Auth state changed, checking...');
-      checkAuth();
-    };
-
-    // Listen for sidebar toggle from floating button
-    const handleToggleSidebar = () => {
-      setIsCollapsed(prev => !prev);
-    };
-
-    window.addEventListener('authStateChanged', handleAuthStateChange);
-    window.addEventListener('storage', checkAuth);
-    window.addEventListener('toggleSidebar', handleToggleSidebar);
-
-    return () => {
-      window.removeEventListener('authStateChanged', handleAuthStateChange);
-      window.removeEventListener('storage', checkAuth);
-      window.removeEventListener('toggleSidebar', handleToggleSidebar);
-    };
   }, []);
+
+  // Loading state untuk mencegah flash content
+  if (loading) {
+    return (
+      <div className="fixed inset-y-0 left-0 flex flex-col bg-white shadow-xl border-r border-gray-200 w-64 z-50">
+        <div className="flex items-center justify-center h-full">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        </div>
+      </div>
+    );
+  }
 
   // Notify ClientLayout when sidebar state changes
   useEffect(() => {
@@ -181,21 +146,7 @@ export default function Navigation() {
 
   const handleLogout = () => {
     if (confirm('Apakah Anda yakin ingin logout?')) {
-      // Hapus localStorage
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('authUser');
-      localStorage.removeItem('authExpires');
-      sessionStorage.clear();
-      
-      // Hapus cookies
-      document.cookie = 'authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-      document.cookie = 'authUser=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-      
-      // Trigger event untuk update auth state
-      window.dispatchEvent(new Event('authStateChanged'));
-      
-      console.log('🚪 Logout completed, redirecting to login...');
-      window.location.href = '/login';
+      logout();
     }
   };
 

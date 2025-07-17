@@ -23,18 +23,46 @@ export const useAuth = () => {
         if (userStr && token) {
           const userData = JSON.parse(userStr);
           setUser(userData);
+          console.log('✅ useAuth: User loaded from localStorage', userData);
+        } else {
+          console.log('❌ useAuth: No user or token found');
+          setUser(null);
         }
       } catch (error) {
-        console.error('Error loading user data:', error);
+        console.error('❌ useAuth: Error loading user data:', error);
         // Clear invalid data
         localStorage.removeItem('authUser');
         localStorage.removeItem('authToken');
+        setUser(null);
       } finally {
         setLoading(false);
       }
     };
 
+    // Load user on mount
     loadUser();
+
+    // Listen for auth state changes (login/logout events)
+    const handleAuthStateChanged = () => {
+      console.log('🔄 useAuth: Auth state changed event received');
+      loadUser();
+    };
+
+    // Listen for storage changes (from other tabs)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'authUser' || e.key === 'authToken') {
+        console.log('🔄 useAuth: Storage changed, reloading user');
+        loadUser();
+      }
+    };
+
+    window.addEventListener('authStateChanged', handleAuthStateChanged);
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('authStateChanged', handleAuthStateChanged);
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   const login = (userData: AuthUser, token: string) => {
@@ -48,6 +76,8 @@ export const useAuth = () => {
       document.cookie = `authToken=${token}; path=/; max-age=86400; SameSite=Lax`;
       document.cookie = `authUser=${JSON.stringify(userData)}; path=/; max-age=86400; SameSite=Lax`;
     }
+    
+    console.log('✅ useAuth: User logged in successfully', userData);
   };
 
   const logout = () => {
@@ -56,6 +86,7 @@ export const useAuth = () => {
     localStorage.removeItem('authUser');
     localStorage.removeItem('authToken');
     localStorage.removeItem('authExpires');
+    sessionStorage.clear();
     
     // Hapus cookies
     if (typeof document !== 'undefined') {
@@ -63,6 +94,7 @@ export const useAuth = () => {
       document.cookie = 'authUser=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
     }
     
+    console.log('🚪 useAuth: User logged out, redirecting to login...');
     window.location.href = '/login';
   };
 
