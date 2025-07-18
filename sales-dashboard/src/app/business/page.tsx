@@ -24,7 +24,82 @@ export default function BusinessPage() {
   const [endDate, setEndDate] = useState('2025-07-18');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Sample data berdasarkan staff yang ada dengan department terpisah
+  // Fetch data dari database
+  const fetchBusinessData = async () => {
+    setLoading(true);
+    try {
+      // Fetch staff data
+      const staffResponse = await fetch('/api/staff');
+      const staffData = await staffResponse.json();
+
+      // Fetch sales data untuk calculate total user, depositor, amount
+      const salesResponse = await fetch(`/api/sales?startDate=${startDate}&endDate=${endDate}`);
+      const salesData = await salesResponse.json();
+
+      // Fetch departments
+      const departmentResponse = await fetch('/api/departments');
+      const departmentData = await departmentResponse.json();
+
+      if (staffData.success && salesData.success && departmentData.success) {
+        const businessResult: StaffBusiness[] = [];
+
+        // Group sales by staff and department
+        const salesByStaffDept: { [key: string]: any[] } = {};
+        
+        if (salesData.data && Array.isArray(salesData.data)) {
+          salesData.data.forEach((sale: any) => {
+            const staffId = sale.staff_id || sale.staffId?._id || sale.staffId;
+            const department = sale.department || sale.type;
+            const key = `${staffId}-${department}`;
+            
+            if (!salesByStaffDept[key]) {
+              salesByStaffDept[key] = [];
+            }
+            salesByStaffDept[key].push(sale);
+          });
+        }
+
+        // Create business data for each staff-department combination
+        if (staffData.data && Array.isArray(staffData.data)) {
+          staffData.data.forEach((staff: any) => {
+            if (departmentData.data && Array.isArray(departmentData.data)) {
+              departmentData.data.forEach((dept: any) => {
+                const key = `${staff.id || staff._id}-${dept.code || dept.name}`;
+                const salesForStaffDept = salesByStaffDept[key] || [];
+                
+                if (salesForStaffDept.length > 0) {
+                  const totalUser = new Set(salesForStaffDept.map(sale => sale.customer_name || sale.customerName)).size;
+                  const totalDepositor = salesForStaffDept.filter(sale => sale.is_depositor || sale.deposit > 0).length;
+                  const totalAmount = salesForStaffDept.reduce((sum, sale) => sum + (sale.amount || sale.deposit || 0), 0);
+
+                  businessResult.push({
+                    id: `${staff.id || staff._id}-${dept.id || dept._id}`,
+                    staff_name: staff.name,
+                    department: dept.code || dept.name,
+                    position: staff.position,
+                    total_user: totalUser,
+                    total_depositor: totalDepositor,
+                    total_amount: totalAmount,
+                    status: (staff.is_active !== false) ? 'Active' : 'Inactive'
+                  });
+                }
+              });
+            }
+          });
+        }
+
+        setBusinessData(businessResult);
+      }
+    } catch (error) {
+      console.error('Error fetching business data:', error);
+      // Fallback to sample data if API fails
+      setBusinessData(sampleData);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Sample data sebagai fallback
   const sampleData: StaffBusiness[] = [
     {
       id: '1',
@@ -129,10 +204,9 @@ export default function BusinessPage() {
   ];
 
   useEffect(() => {
-    // Initialize with sample data
-    setBusinessData(sampleData);
-    setFilteredData(sampleData);
-  }, []);
+    // Fetch real data on component mount
+    fetchBusinessData();
+  }, [startDate, endDate]);
 
   // Filter data berdasarkan search query
   useEffect(() => {
@@ -150,35 +224,23 @@ export default function BusinessPage() {
   }, [searchQuery, businessData]);
 
   const handleSearch = () => {
-    setLoading(true);
-    // Simulate API call berdasarkan date range
-    setTimeout(() => {
-      console.log('Searching data from', startDate, 'to', endDate);
-      // Pada implementasi nyata, panggil API dengan date range
-      setBusinessData(sampleData);
-      setLoading(false);
-    }, 1000);
+    // Trigger data fetch with new date range
+    fetchBusinessData();
   };
 
   const handleReset = () => {
     setStartDate('2025-07-01');
     setEndDate('2025-07-18');
     setSearchQuery('');
-    setBusinessData(sampleData);
-    setFilteredData(sampleData);
+    fetchBusinessData();
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-6 py-6">
-        
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Business</h1>
-        </div>
+      <div className="max-w-7xl mx-auto px-3 py-3">
 
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
             {/* Start Date */}
             <div>
@@ -225,7 +287,7 @@ export default function BusinessPage() {
               </button>
               <button
                 onClick={handleReset}
-                className="px-6 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors"
+                className="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
               >
                 Reset
               </button>
