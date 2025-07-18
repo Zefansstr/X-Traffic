@@ -67,22 +67,27 @@ export default function BusinessPage() {
                 const key = `${staff.id || staff._id}-${dept.code || dept.name}`;
                 const salesForStaffDept = salesByStaffDept[key] || [];
                 
-                if (salesForStaffDept.length > 0) {
-                  const totalUser = new Set(salesForStaffDept.map(sale => sale.customer_name || sale.customerName)).size;
-                  const totalDepositor = salesForStaffDept.filter(sale => sale.is_depositor || sale.deposit > 0).length;
-                  const totalAmount = salesForStaffDept.reduce((sum, sale) => sum + (sale.amount || sale.deposit || 0), 0);
+                                 if (salesForStaffDept.length > 0) {
+                   // Total User = unique customer names
+                   const totalUser = new Set(salesForStaffDept.map(sale => sale.customer_name || sale.customerName)).size;
+                   
+                   // Total Depositor = total count semua sales/customers (bukan unique)
+                   const totalDepositor = salesForStaffDept.length;
+                   
+                   // Total Amount = sum of all amounts
+                   const totalAmount = salesForStaffDept.reduce((sum, sale) => sum + (sale.amount || sale.deposit || 0), 0);
 
-                  businessResult.push({
-                    id: `${staff.id || staff._id}-${dept.id || dept._id}`,
-                    staff_name: staff.name,
-                    department: dept.code || dept.name,
-                    position: staff.position,
-                    total_user: totalUser,
-                    total_depositor: totalDepositor,
-                    total_amount: totalAmount,
-                    status: (staff.is_active !== false) ? 'Active' : 'Inactive'
-                  });
-                }
+                   businessResult.push({
+                     id: `${staff.id || staff._id}-${dept.id || dept._id}`,
+                     staff_name: staff.name,
+                     department: dept.code || dept.name,
+                     position: staff.position,
+                     total_user: totalUser,
+                     total_depositor: totalDepositor,
+                     total_amount: totalAmount,
+                     status: (staff.is_active !== false) ? 'Active' : 'Inactive'
+                   });
+                 }
               });
             }
           });
@@ -99,16 +104,16 @@ export default function BusinessPage() {
     }
   };
 
-  // Sample data sebagai fallback
+  // Sample data sebagai fallback  
   const sampleData: StaffBusiness[] = [
     {
       id: '1',
       staff_name: 'MALIK',
       department: 'TMT',
       position: 'SE1',
-      total_user: 8,
-      total_depositor: 6,
-      total_amount: 420.00,
+      total_user: 4, // unique customers
+      total_depositor: 8, // total sales/transactions 
+      total_amount: 289.01,
       status: 'Active'
     },
     {
@@ -116,90 +121,30 @@ export default function BusinessPage() {
       staff_name: 'MALIK',
       department: 'CRT',
       position: 'SE1',
-      total_user: 5,
-      total_depositor: 4,
-      total_amount: 280.00,
+      total_user: 2, // unique customers
+      total_depositor: 6, // total sales/transactions
+      total_amount: 664.98,
       status: 'Active'
     },
     {
       id: '3',
       staff_name: 'KAREN',
       department: 'TMT',
-      position: 'SE2',
-      total_user: 12,
-      total_depositor: 10,
-      total_amount: 1250.00,
+      position: 'SE1',
+      total_user: 1, // unique customers
+      total_depositor: 2, // total sales/transactions
+      total_amount: 50.00,
       status: 'Active'
     },
     {
       id: '4',
       staff_name: 'KAREN',
       department: 'CRT',
-      position: 'SE2',
-      total_user: 8,
-      total_depositor: 7,
-      total_amount: 980.00,
+      position: 'SE1',
+      total_user: 7, // unique customers  
+      total_depositor: 12, // total sales/transactions
+      total_amount: 1529.99,
       status: 'Active'
-    },
-    {
-      id: '5',
-      staff_name: 'ADRIANSYAH',
-      department: 'TMT',
-      position: 'PE1',
-      total_user: 15,
-      total_depositor: 12,
-      total_amount: 1680.00,
-      status: 'Active'
-    },
-    {
-      id: '6',
-      staff_name: 'ADRIANSYAH',
-      department: 'CRT',
-      position: 'PE1',
-      total_user: 7,
-      total_depositor: 6,
-      total_amount: 820.00,
-      status: 'Active'
-    },
-    {
-      id: '7',
-      staff_name: 'RINTO',
-      department: 'TMT',
-      position: 'PE2',
-      total_user: 20,
-      total_depositor: 18,
-      total_amount: 2450.00,
-      status: 'Active'
-    },
-    {
-      id: '8',
-      staff_name: 'RINTO',
-      department: 'CRT',
-      position: 'PE2',
-      total_user: 10,
-      total_depositor: 8,
-      total_amount: 1150.00,
-      status: 'Active'
-    },
-    {
-      id: '9',
-      staff_name: 'FANIE',
-      department: 'TMT',
-      position: 'Manager',
-      total_user: 25,
-      total_depositor: 22,
-      total_amount: 3200.00,
-      status: 'Active'
-    },
-    {
-      id: '10',
-      staff_name: 'FANIE',
-      department: 'CRT',
-      position: 'Manager',
-      total_user: 12,
-      total_depositor: 10,
-      total_amount: 1580.00,
-      status: 'Inactive'
     }
   ];
 
