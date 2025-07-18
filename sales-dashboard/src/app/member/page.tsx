@@ -161,7 +161,10 @@ export default function MemberPage() {
 
     // Filter by staff
     if (filters.staffId) {
-      filtered = filtered.filter(sale => sale.staffId?._id === filters.staffId);
+      filtered = filtered.filter(sale => {
+        const sid = typeof sale.staffId === 'string' ? sale.staffId : sale.staffId?._id;
+        return sid === filters.staffId;
+      });
     }
 
     // Filter by customer name
