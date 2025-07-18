@@ -255,33 +255,33 @@ export default function OperatorPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <div className="container mx-auto px-6 py-8">
+      <div className="container mx-auto px-4 py-4">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mb-4">
-            <span className="text-2xl">👥</span>
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mb-2">
+            <span className="text-lg">👥</span>
           </div>
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Kelola Users</h1>
-          <p className="text-gray-600">Tambah, edit, dan kelola users dengan role-based access</p>
+          <h1 className="text-2xl font-bold text-gray-800 mb-1">Kelola Users</h1>
+          <p className="text-sm text-gray-600">Tambah, edit, dan kelola users dengan role-based access</p>
         </div>
 
         {/* Form Section - Only show if user can create */}
         {canPerformAction('create') && (
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-                  <span className="text-white text-lg">👤</span>
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-white rounded-lg shadow-lg p-4 mb-6">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                  <span className="text-white text-sm">👤</span>
                 </div>
-                <h2 className="text-2xl font-bold text-gray-800">
+                <h2 className="text-lg font-bold text-gray-800">
                   {editingUser ? 'Edit User' : 'Tambah User Baru'}
                 </h2>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
                       Username *
                     </label>
                     <input
@@ -290,13 +290,13 @@ export default function OperatorPage() {
                       value={formData.username}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black transition-all"
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent text-black transition-all"
                       placeholder="Masukkan username"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
                       Email *
                     </label>
                     <input
@@ -305,15 +305,13 @@ export default function OperatorPage() {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black transition-all"
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent text-black transition-all"
                       placeholder="Masukkan email"
                     />
                   </div>
 
-
-
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
                       Nama Lengkap *
                     </label>
                     <input
@@ -322,20 +320,20 @@ export default function OperatorPage() {
                       value={formData.full_name}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black transition-all"
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent text-black transition-all"
                       placeholder="Masukkan nama lengkap"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
                       Role *
                     </label>
                     <select
                       name="role"
                       value={formData.role}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black transition-all"
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent text-black transition-all"
                     >
                       <option value="viewer">Viewer</option>
                       <option value="user">User</option>
@@ -347,7 +345,7 @@ export default function OperatorPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     Password {!editingUser && '*'}
                   </label>
                   <input
@@ -356,16 +354,16 @@ export default function OperatorPage() {
                     value={formData.password}
                     onChange={handleChange}
                     required={!editingUser}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black transition-all"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent text-black transition-all"
                     placeholder={editingUser ? "Kosongkan jika tidak ingin mengubah password" : "Masukkan password"}
                   />
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex gap-2">
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="flex-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 px-6 rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white py-2 px-4 rounded-md hover:from-blue-600 hover:to-purple-600 transition-all duration-200 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {submitting ? 'Menyimpan...' : (editingUser ? 'Update User' : 'Tambah User')}
                   </button>
@@ -374,7 +372,7 @@ export default function OperatorPage() {
                     <button
                       type="button"
                       onClick={handleCloseModal}
-                      className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                      className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors text-sm font-medium"
                     >
                       Batal
                     </button>
@@ -386,14 +384,14 @@ export default function OperatorPage() {
         )}
 
         {/* Table Section */}
-        <div className="max-w-6xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-            <div className="px-8 py-6 border-b border-gray-200">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-                  <span className="text-white text-lg">📋</span>
+        <div className="max-w-5xl mx-auto">
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div className="px-4 py-3 border-b border-gray-200">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                  <span className="text-white text-sm">📋</span>
                 </div>
-                <h2 className="text-2xl font-bold text-gray-800">Daftar Users</h2>
+                <h2 className="text-lg font-bold text-gray-800">Daftar Users</h2>
               </div>
             </div>
             
@@ -401,57 +399,57 @@ export default function OperatorPage() {
               <table className="w-full table-auto">
                 <thead>
                   <tr className="bg-gradient-to-r from-blue-100 to-purple-100">
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Username</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Nama Lengkap</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Email</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Role</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Status</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Last Login</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Actions</th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700">Username</th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700">Nama Lengkap</th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700">Email</th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700">Role</th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700">Status</th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700">Last Login</th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
+                      <td colSpan={7} className="px-3 py-4 text-center text-gray-500 text-sm">
                         Memuat data...
                       </td>
                     </tr>
                   ) : users.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
+                      <td colSpan={7} className="px-3 py-4 text-center text-gray-500 text-sm">
                         Belum ada data users
                       </td>
                     </tr>
                   ) : (
                     users.map((user, index) => (
                       <tr key={user.id} className={`${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'} hover:bg-blue-50 transition-colors`}>
-                        <td className="px-6 py-4 font-medium text-gray-900">{user.username}</td>
-                        <td className="px-6 py-4 text-gray-700">{user.full_name}</td>
-                        <td className="px-6 py-4 text-gray-700">{user.email}</td>
-                        <td className="px-6 py-4">
-                          <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getRoleBadgeColor(user.role)}`}>
+                        <td className="px-3 py-2 font-medium text-gray-900 text-sm">{user.username}</td>
+                        <td className="px-3 py-2 text-gray-700 text-sm">{user.full_name}</td>
+                        <td className="px-3 py-2 text-gray-700 text-sm">{user.email}</td>
+                        <td className="px-3 py-2">
+                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(user.role)}`}>
                             {getRoleDisplayName(user.role)}
                           </span>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-3 py-2">
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                             user.is_active
                               ? 'bg-green-100 text-green-800' 
                               : 'bg-red-100 text-red-800'
                           }`}>
-                                                          {user.is_active ? 'Active' : 'Inactive'}
+                            {user.is_active ? 'Active' : 'Inactive'}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-gray-700">
+                        <td className="px-3 py-2 text-gray-700 text-sm">
                           {user.last_login ? new Date(user.last_login).toLocaleDateString('id-ID') : 'Belum pernah'}
                         </td>
-                        <td className="px-6 py-4">
-                          <div className="flex space-x-2">
+                        <td className="px-3 py-2">
+                          <div className="flex space-x-1">
                             {canPerformAction('edit') && (
                               <button
                                 onClick={() => handleOpenModal(user)}
-                                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs transition-colors"
+                                className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs transition-colors"
                               >
                                 Edit
                               </button>
@@ -459,7 +457,7 @@ export default function OperatorPage() {
                             {canPerformAction('edit') && (
                               <button
                                 onClick={() => handleToggleStatus(user.id, user.is_active)}
-                                className={`px-3 py-1 rounded text-xs transition-colors ${
+                                className={`px-2 py-1 rounded text-xs transition-colors ${
                                   user.is_active
                                     ? 'bg-red-500 hover:bg-red-600 text-white' 
                                     : 'bg-green-500 hover:bg-green-600 text-white'
@@ -471,9 +469,9 @@ export default function OperatorPage() {
                             {canPerformAction('delete') && (
                               <button
                                 onClick={() => handleDelete(user.id)}
-                                                                  className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs transition-colors"
+                                className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs transition-colors"
                               >
-                                                                  Delete
+                                Delete
                               </button>
                             )}
                           </div>

@@ -145,32 +145,32 @@ export default function DevicePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-orange-50">
-      <div className="container mx-auto px-6 py-8">
+      <div className="container mx-auto px-4 py-4">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full mb-4">
-            <span className="text-2xl">📱</span>
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center w-10 h-10 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full mb-2">
+            <span className="text-lg">📱</span>
           </div>
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Manage Device</h1>
-          <p className="text-gray-600">Add, edit, and manage devices for tracking</p>
+          <h1 className="text-2xl font-bold text-gray-800 mb-1">Manage Device</h1>
+          <p className="text-sm text-gray-600">Add, edit, and manage devices for tracking</p>
         </div>
 
         {/* Form Section */}
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-8 h-8 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center">
-                <span className="text-white text-lg">📱</span>
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-white rounded-lg shadow-lg p-4 mb-6">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-6 h-6 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center">
+                <span className="text-white text-sm">📱</span>
               </div>
-              <h2 className="text-2xl font-bold text-gray-800">
+              <h2 className="text-lg font-bold text-gray-800">
                 {editingId ? 'Edit Device' : 'Add New Device'}
               </h2>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     Device Name *
                   </label>
                   <input
@@ -179,13 +179,13 @@ export default function DevicePage() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-black transition-all"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-yellow-500 focus:border-transparent text-black transition-all"
                     placeholder="Enter device name"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     Description
                   </label>
                   <input
@@ -193,17 +193,17 @@ export default function DevicePage() {
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-black transition-all"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-yellow-500 focus:border-transparent text-black transition-all"
                     placeholder="Enter device description"
                   />
                 </div>
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex gap-2">
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 bg-gradient-to-r from-yellow-500 to-orange-500 text-white py-3 px-6 rounded-lg hover:from-yellow-600 hover:to-orange-600 transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 bg-gradient-to-r from-yellow-500 to-orange-500 text-white py-2 px-4 rounded-md hover:from-yellow-600 hover:to-orange-600 transition-all duration-200 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {submitting ? 'Saving...' : (editingId ? 'Update Device' : 'Add Device')}
                 </button>
@@ -212,7 +212,7 @@ export default function DevicePage() {
                   <button
                     type="button"
                     onClick={handleCancel}
-                    className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors text-sm font-medium"
                   >
                     Cancel
                   </button>
@@ -222,13 +222,13 @@ export default function DevicePage() {
           </div>
 
           {/* Table Section */}
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-            <div className="px-8 py-6 border-b border-gray-200">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center">
-                  <span className="text-white text-lg">📋</span>
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div className="px-4 py-3 border-b border-gray-200">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center">
+                  <span className="text-white text-sm">📋</span>
                 </div>
-                <h2 className="text-2xl font-bold text-gray-800">Device List</h2>
+                <h2 className="text-lg font-bold text-gray-800">Device List</h2>
               </div>
             </div>
             
@@ -236,32 +236,32 @@ export default function DevicePage() {
               <table className="w-full table-auto">
                 <thead>
                   <tr className="bg-gradient-to-r from-yellow-100 to-orange-100">
-                                          <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Name</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Description</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Status</th>
-                                          <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Created Date</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Actions</th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700">Name</th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700">Description</th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700">Status</th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700">Created Date</th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                      <td colSpan={5} className="px-3 py-4 text-center text-gray-500 text-sm">
                         Loading devices...
                       </td>
                     </tr>
                   ) : devices.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                      <td colSpan={5} className="px-3 py-4 text-center text-gray-500 text-sm">
                         No devices found. Add your first device.
                       </td>
                     </tr>
                   ) : (
                     devices.map((item, index) => (
                       <tr key={item.id} className={`${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'} hover:bg-yellow-50 transition-colors`}>
-                        <td className="px-6 py-4 font-medium text-gray-900">{item.name}</td>
-                        <td className="px-6 py-4 text-gray-700">{item.description || '-'}</td>
-                        <td className="px-6 py-4">
+                        <td className="px-3 py-2 font-medium text-gray-900 text-sm">{item.name}</td>
+                        <td className="px-3 py-2 text-gray-700 text-sm">{item.description || '-'}</td>
+                        <td className="px-3 py-2">
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                             item.is_active 
                               ? 'bg-green-100 text-green-800' 
@@ -270,20 +270,20 @@ export default function DevicePage() {
                             {item.is_active ? 'Active' : 'Inactive'}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-gray-700">
+                        <td className="px-3 py-2 text-gray-700 text-sm">
                           {new Date(item.created_at).toLocaleDateString('id-ID')}
                         </td>
-                        <td className="px-6 py-4">
-                          <div className="flex space-x-2">
+                        <td className="px-3 py-2">
+                          <div className="flex space-x-1">
                             <button
                               onClick={() => handleEdit(item)}
-                              className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-sm"
+                              className="px-2 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-xs"
                             >
                               Edit
                             </button>
                             <button
                               onClick={() => handleToggleStatus(item.id, item.is_active)}
-                              className={`px-3 py-1 rounded-md transition-colors text-sm ${
+                              className={`px-2 py-1 rounded-md transition-colors text-xs ${
                                 item.is_active 
                                   ? 'bg-red-500 text-white hover:bg-red-600' 
                                   : 'bg-green-500 text-white hover:bg-green-600'
@@ -293,7 +293,7 @@ export default function DevicePage() {
                             </button>
                             <button
                               onClick={() => handleDelete(item.id)}
-                              className="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors text-sm"
+                              className="px-2 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors text-xs"
                             >
                               Delete
                             </button>

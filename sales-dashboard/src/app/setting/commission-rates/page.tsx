@@ -36,7 +36,14 @@ export default function CommissionRatesPage() {
 
   const fetchAdvancedRules = async () => {
     try {
-      // Sample data berdasarkan logika yang diberikan user
+      // Try to load from localStorage first
+      const savedRules = localStorage.getItem('advancedCommissionRules')
+      if (savedRules) {
+        setAdvancedRules(JSON.parse(savedRules))
+        return
+      }
+
+      // If no saved rules, use initial sample data
       const sampleRules: AdvancedCommissionRule[] = [
         // SE2 CRT Rules
         {
@@ -152,6 +159,8 @@ export default function CommissionRatesPage() {
           is_active: true
         }
       ]
+      // Save initial sample rules to localStorage and set state
+      localStorage.setItem('advancedCommissionRules', JSON.stringify(sampleRules))
       setAdvancedRules(sampleRules)
     } catch (error) {
       console.error('Error fetching advanced rules:', error)
@@ -163,8 +172,40 @@ export default function CommissionRatesPage() {
     setLoading(true)
 
     try {
-      // Simulate API call
-      console.log('Saving advanced rule:', advancedFormData)
+      // Validate form data
+      if (advancedFormData.rate_value <= 0) {
+        alert('Rate Value must be greater than 0')
+        setLoading(false)
+        return
+      }
+
+      if (advancedFormData.max_count !== null && advancedFormData.max_count <= advancedFormData.min_count) {
+        alert('Max Count must be greater than Min Count')
+        setLoading(false)
+        return
+      }
+
+      // Create new rule with unique ID
+      const newRule: AdvancedCommissionRule = {
+        id: Date.now().toString(),
+        position: advancedFormData.position,
+        department: advancedFormData.department,
+        type: advancedFormData.type,
+        min_count: advancedFormData.min_count,
+        max_count: advancedFormData.max_count,
+        rate_value: advancedFormData.rate_value,
+        currency: advancedFormData.currency,
+        is_active: true
+      }
+      
+      // Add to existing rules
+      const updatedRules = [...advancedRules, newRule]
+      setAdvancedRules(updatedRules)
+      
+      // Save to localStorage
+      localStorage.setItem('advancedCommissionRules', JSON.stringify(updatedRules))
+      
+      console.log('New advanced rule added:', newRule)
       
       // Reset form
       setAdvancedFormData({
@@ -177,12 +218,10 @@ export default function CommissionRatesPage() {
         currency: 'MYR'
       })
       
-      // Refresh data
-      fetchAdvancedRules()
-      alert('Advanced commission rule saved successfully!')
+      alert('Advanced commission rule added successfully!')
     } catch (error) {
       console.error('Error saving advanced rule:', error)
-      alert('An error occurred')
+      alert('An error occurred while saving the rule')
     } finally {
       setLoading(false)
     }
@@ -190,7 +229,12 @@ export default function CommissionRatesPage() {
 
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this rule?')) {
-      setAdvancedRules(prev => prev.filter(rule => rule.id !== id))
+      const updatedRules = advancedRules.filter(rule => rule.id !== id)
+      setAdvancedRules(updatedRules)
+      
+      // Save to localStorage
+      localStorage.setItem('advancedCommissionRules', JSON.stringify(updatedRules))
+      
       alert('Rule deleted successfully!')
     }
   }

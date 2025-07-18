@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Database Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .result { background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 3px; }
+        button { background: #007cba; color: white; padding: 10px 15px; border: none; border-radius: 3px; cursor: pointer; margin: 5px; }
+        button:hover { background: #005a87; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Database & API Test</h1>
+    
+    <div class="test-section">
+        <h3>1. Test API Health</h3>
+        <button onclick="testHealth()">Test Health</button>
+        <div id="health-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>2. Test Database Sales Table</h3>
+        <button onclick="testSales()">Check Sales Data</button>
+        <div id="sales-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>3. Add Real Sales Data</h3>
+        <button onclick="addRealData()">Add Sample Data</button>
+        <div id="add-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>4. Test Commission Report</h3>
+        <button onclick="testCommission()">Test Commission Report</button>
+        <div id="commission-result" class="result"></div>
+    </div>
+
+    <script>
+        async function testHealth() {
+            const result = document.getElementById('health-result');
+            result.innerHTML = 'Testing...';
+            
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    result.innerHTML = `<span class="success">✅ API Health OK</span><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    result.innerHTML = `<span class="error">❌ API Health Failed</span><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ Error: ${error.message}</span>`;
+            }
+        }
+
+        async function testSales() {
+            const result = document.getElementById('sales-result');
+            result.innerHTML = 'Testing...';
+            
+            try {
+                const response = await fetch('/api/sales');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    result.innerHTML = `<span class="success">✅ Sales API OK - Found ${data.data?.length || 0} records</span><pre>${JSON.stringify(data.data?.slice(0, 3) || [], null, 2)}</pre>`;
+                } else {
+                    result.innerHTML = `<span class="error">❌ Sales API Failed</span><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ Error: ${error.message}</span>`;
+            }
+        }
+
+        async function addRealData() {
+            const result = document.getElementById('add-result');
+            result.innerHTML = 'Adding data...';
+            
+            try {
+                const response = await fetch('/api/add-real-sales', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    result.innerHTML = `<span class="success">✅ Data Added Successfully!</span><pre>Total Records: ${data.summary?.totalRecords || 0}</pre>`;
+                } else {
+                    result.innerHTML = `<span class="error">❌ Failed to Add Data</span><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ Error: ${error.message}</span>`;
+            }
+        }
+
+        async function testCommission() {
+            const result = document.getElementById('commission-result');
+            result.innerHTML = 'Testing...';
+            
+            try {
+                const response = await fetch('/api/reports/commission?startDate=2025-06-30&endDate=2025-07-30');
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    result.innerHTML = `<span class="success">✅ Commission Report OK - Found ${data.data?.length || 0} staff</span><pre>${JSON.stringify(data.data || [], null, 2)}</pre>`;
+                } else {
+                    result.innerHTML = `<span class="error">❌ Commission Report Failed</span><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ Error: ${error.message}</span>`;
+            }
+        }
+    </script>
+</body>
+</html> 
