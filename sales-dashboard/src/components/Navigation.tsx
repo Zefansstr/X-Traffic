@@ -8,6 +8,7 @@ import {
   DashboardIcon, 
   MemberIcon, 
   OverallReportIcon, 
+  BusinessIcon,
   CommissionReportIcon, 
   SettingIcon, 
   OperatorIcon,
@@ -79,6 +80,12 @@ export default function Navigation() {
       href: '/reports/overall', 
       icon: <OverallReportIcon className="w-5 h-5" />, 
       menuKey: 'reports' as const
+    },
+    { 
+      name: 'Business', 
+      href: '/business', 
+      icon: <BusinessIcon className="w-5 h-5" />, 
+      menuKey: 'business' as const
     },
     { 
       name: 'Commission Report', 

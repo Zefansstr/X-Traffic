@@ -51,6 +51,7 @@ export interface RolePermissions {
     dashboard: boolean;
     member: boolean;
     reports: boolean;
+    business: boolean;
     commission: boolean;
     setting: boolean;
     operator: boolean;
@@ -69,6 +70,7 @@ export const ROLE_PERMISSIONS: Record<User['role'], RolePermissions> = {
       dashboard: true,
       member: true,
       reports: true,
+      business: true,
       commission: true,
       setting: true,
       operator: true,
@@ -85,6 +87,7 @@ export const ROLE_PERMISSIONS: Record<User['role'], RolePermissions> = {
       dashboard: true,
       member: true,
       reports: true,
+      business: true,
       commission: true,
       setting: true,
       operator: false, // Tidak diizinkan menu Operator
@@ -101,6 +104,7 @@ export const ROLE_PERMISSIONS: Record<User['role'], RolePermissions> = {
       dashboard: true,
       member: true,
       reports: true,
+      business: true,
       commission: true,
       setting: false, // Tidak diizinkan menu Setting dan Operator
       operator: false,
@@ -117,6 +121,7 @@ export const ROLE_PERMISSIONS: Record<User['role'], RolePermissions> = {
       dashboard: true,
       member: true,
       reports: true,
+      business: true,
       commission: true,
       setting: false, // Tidak ada menu Setting dan Operator
       operator: false,
@@ -133,6 +138,7 @@ export const ROLE_PERMISSIONS: Record<User['role'], RolePermissions> = {
       dashboard: true,
       member: false, // Tidak bisa menambahkan member
       reports: true,
+      business: true,
       commission: true,
       setting: false,
       operator: false,
