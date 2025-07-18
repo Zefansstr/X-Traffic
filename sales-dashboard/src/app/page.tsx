@@ -2,26 +2,7 @@
 import { useState, useEffect } from 'react';
 import SalesTable from '@/components/SalesTable';
 import DashboardSummary from '@/components/DashboardSummary';
-
-// Hook untuk authentication
-const useAuth = () => {
-  const [user, setUser] = useState<any>(null);
-
-  useEffect(() => {
-    // Get user from localStorage
-    const userData = localStorage.getItem('authUser') || localStorage.getItem('user');
-    if (userData) {
-      const parsedUser = JSON.parse(userData);
-      console.log('📱 Page - User data:', parsedUser);
-      console.log('📱 Page - User role:', parsedUser.role);
-      setUser(parsedUser);
-    } else {
-      console.log('📱 Page - No user data found in localStorage');
-    }
-  }, []);
-
-  return { user };
-};
+import { useAuth } from '@/lib/hooks/useAuth';
 
 export default function Home() {
   const { user } = useAuth();
