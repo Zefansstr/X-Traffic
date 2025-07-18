@@ -17,6 +17,10 @@ interface CommissionData {
   fdaRate: number
   isQualified: boolean
   distanceToNextTier: number
+  reactiveCount: number
+  ndCount: number
+  headPerCount: number
+  currentTier: string
 }
 
 export default function CommissionReportPage() {
@@ -170,16 +174,19 @@ export default function CommissionReportPage() {
                     Position
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Total KPI
+                    ND Count
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Reactive Count
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Total Depositor
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Total FDA
+                    FDA Rate
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    FDA Rate
+                    Head Per Count
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     TMT (RM)
@@ -206,25 +213,28 @@ export default function CommissionReportPage() {
                         {item.position}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {item.kpiScore}
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 font-medium">
+                      {item.ndCount}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">
+                      {item.reactiveCount}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {item.depositorCount}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {item.fdaCount}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {item.fdaRate.toFixed(2)}%
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {formatCurrency(item.tmtTotal)}
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-orange-600 font-medium">
+                      ${item.headPerCount?.toFixed(2) || '0.00'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {formatCurrency(item.crtTotal)}
+                      {formatCurrency(item.tmtCommission)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {formatCurrency(item.crtCommission)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-purple-600">
                       {formatCurrency(item.totalCommission)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

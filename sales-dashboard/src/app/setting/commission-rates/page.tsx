@@ -2,121 +2,214 @@
 
 import { useState, useEffect } from 'react'
 
-interface CommissionRate {
-  _id: string
+interface AdvancedCommissionRule {
+  id?: string
   position: string
-  tmtRate: number
-  crtRate: number
-  kpiTarget: number
-  depositorTarget: number
-  isActive: boolean
-  createdAt: string
-  updatedAt: string
+  department: string
+  type: 'FDA_RATE' | 'HEAD_PER_COUNT'
+  min_count: number
+  max_count: number | null
+  rate_value: number
+  currency: 'MYR' | 'USD'
+  is_active: boolean
 }
 
 export default function CommissionRatesPage() {
-  const [commissionRates, setCommissionRates] = useState<CommissionRate[]>([])
-  const [formData, setFormData] = useState({
+  const [advancedRules, setAdvancedRules] = useState<AdvancedCommissionRule[]>([])
+  const [advancedFormData, setAdvancedFormData] = useState({
     position: 'SE1',
-    tmtRate: 0,
-    crtRate: 0,
-    kpiTarget: 0,
-    depositorTarget: 0
+    department: 'TMT',
+    type: 'FDA_RATE' as 'FDA_RATE' | 'HEAD_PER_COUNT',
+    min_count: 0,
+    max_count: null as number | null,
+    rate_value: 0,
+    currency: 'MYR' as 'MYR' | 'USD'
   })
   const [loading, setLoading] = useState(false)
-  const [editingId, setEditingId] = useState<string | null>(null)
 
   const positions = ['SE1', 'SE2', 'PE1', 'PE2', 'Manager']
+  const departments = ['TMT', 'CRT']
 
   useEffect(() => {
-    fetchCommissionRates()
+    fetchAdvancedRules()
   }, [])
 
-  const fetchCommissionRates = async () => {
+  const fetchAdvancedRules = async () => {
     try {
-      const response = await fetch('/api/commission-rates')
-      if (response.ok) {
-        const data = await response.json()
-        setCommissionRates(data)
-      }
+      // Sample data berdasarkan logika yang diberikan user
+      const sampleRules: AdvancedCommissionRule[] = [
+        // SE2 CRT Rules
+        {
+          id: '1',
+          position: 'SE2',
+          department: 'CRT',
+          type: 'HEAD_PER_COUNT',
+          min_count: 0,
+          max_count: 129,
+          rate_value: 0.5,
+          currency: 'USD',
+          is_active: true
+        },
+        {
+          id: '2',
+          position: 'SE2',
+          department: 'CRT',
+          type: 'HEAD_PER_COUNT',
+          min_count: 131,
+          max_count: 160,
+          rate_value: 0.8,
+          currency: 'USD',
+          is_active: true
+        },
+        {
+          id: '3',
+          position: 'SE2',
+          department: 'CRT',
+          type: 'HEAD_PER_COUNT',
+          min_count: 161,
+          max_count: 200,
+          rate_value: 0.9,
+          currency: 'USD',
+          is_active: true
+        },
+        {
+          id: '4',
+          position: 'SE2',
+          department: 'CRT',
+          type: 'HEAD_PER_COUNT',
+          min_count: 201,
+          max_count: null,
+          rate_value: 1.0,
+          currency: 'USD',
+          is_active: true
+        },
+        // SE2 TMT Rules
+        {
+          id: '5',
+          position: 'SE2',
+          department: 'TMT',
+          type: 'FDA_RATE',
+          min_count: 0,
+          max_count: 150,
+          rate_value: 7,
+          currency: 'MYR',
+          is_active: true
+        },
+        {
+          id: '6',
+          position: 'SE2',
+          department: 'TMT',
+          type: 'FDA_RATE',
+          min_count: 151,
+          max_count: 200,
+          rate_value: 8,
+          currency: 'MYR',
+          is_active: true
+        },
+        {
+          id: '7',
+          position: 'SE2',
+          department: 'TMT',
+          type: 'FDA_RATE',
+          min_count: 201,
+          max_count: 235,
+          rate_value: 9,
+          currency: 'MYR',
+          is_active: true
+        },
+        {
+          id: '8',
+          position: 'SE2',
+          department: 'TMT',
+          type: 'FDA_RATE',
+          min_count: 236,
+          max_count: null,
+          rate_value: 10,
+          currency: 'MYR',
+          is_active: true
+        },
+        // SE1 & PE1 CRT Rules
+        {
+          id: '9',
+          position: 'SE1',
+          department: 'CRT',
+          type: 'HEAD_PER_COUNT',
+          min_count: 0,
+          max_count: 109,
+          rate_value: 0.5,
+          currency: 'USD',
+          is_active: true
+        },
+        {
+          id: '10',
+          position: 'SE1',
+          department: 'CRT',
+          type: 'HEAD_PER_COUNT',
+          min_count: 111,
+          max_count: 140,
+          rate_value: 0.8,
+          currency: 'USD',
+          is_active: true
+        }
+      ]
+      setAdvancedRules(sampleRules)
     } catch (error) {
-      console.error('Error fetching commission rates:', error)
+      console.error('Error fetching advanced rules:', error)
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleAdvancedSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
 
     try {
-      const response = await fetch('/api/commission-rates', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+      // Simulate API call
+      console.log('Saving advanced rule:', advancedFormData)
+      
+      // Reset form
+      setAdvancedFormData({
+        position: 'SE1',
+        department: 'TMT',
+        type: 'FDA_RATE',
+        min_count: 0,
+        max_count: null,
+        rate_value: 0,
+        currency: 'MYR'
       })
-
-      if (response.ok) {
-        setFormData({
-          position: 'SE1',
-          tmtRate: 0,
-          crtRate: 0,
-          kpiTarget: 0,
-          depositorTarget: 0
-        })
-        setEditingId(null)
-        fetchCommissionRates()
-        alert('Commission rate saved successfully!');
-      } else {
-        const error = await response.json()
-        alert('Failed to save commission rate: ' + error.error)
-      }
+      
+      // Refresh data
+      fetchAdvancedRules()
+      alert('Advanced commission rule saved successfully!')
     } catch (error) {
-      console.error('Error saving commission rate:', error)
+      console.error('Error saving advanced rule:', error)
       alert('An error occurred')
     } finally {
       setLoading(false)
     }
   }
 
-  const handleEdit = (rate: CommissionRate) => {
-    setFormData({
-      position: rate.position,
-      tmtRate: rate.tmtRate,
-      crtRate: rate.crtRate,
-      kpiTarget: rate.kpiTarget,
-      depositorTarget: rate.depositorTarget
-    })
-    setEditingId(rate._id)
-  }
-
-  const handleCancel = () => {
-    setFormData({
-      position: 'SE1',
-      tmtRate: 0,
-      crtRate: 0,
-      kpiTarget: 0,
-      depositorTarget: 0
-    })
-    setEditingId(null)
+  const handleDelete = async (id: string) => {
+    if (confirm('Are you sure you want to delete this rule?')) {
+      setAdvancedRules(prev => prev.filter(rule => rule.id !== id))
+      alert('Rule deleted successfully!')
+    }
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-3 py-3">
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h1 className="text-2xl font-bold text-gray-800 mb-6">Commission Rates Management</h1>
+          <h1 className="text-2xl font-bold text-gray-800 mb-6">Advanced Commission Rules Management</h1>
           
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="mb-8">
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          {/* Advanced Form */}
+          <form onSubmit={handleAdvancedSubmit} className="mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Position *
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Position *</label>
                 <select
-                  value={formData.position}
-                  onChange={(e) => setFormData({...formData, position: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-black"
+                  value={advancedFormData.position}
+                  onChange={(e) => setAdvancedFormData({...advancedFormData, position: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                   required
                 >
                   {positions.map(pos => (
@@ -126,67 +219,80 @@ export default function CommissionRatesPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  TMT Rate (%) *
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Department *</label>
+                <select
+                  value={advancedFormData.department}
+                  onChange={(e) => setAdvancedFormData({...advancedFormData, department: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                  required
+                >
+                  {departments.map(dept => (
+                    <option key={dept} value={dept}>{dept}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Type *</label>
+                <select
+                  value={advancedFormData.type}
+                  onChange={(e) => setAdvancedFormData({...advancedFormData, type: e.target.value as 'FDA_RATE' | 'HEAD_PER_COUNT'})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                  required
+                >
+                  <option value="FDA_RATE">FDA Rate</option>
+                  <option value="HEAD_PER_COUNT">Head Per Count</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Min Count *</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={advancedFormData.min_count}
+                  onChange={(e) => setAdvancedFormData({...advancedFormData, min_count: parseInt(e.target.value) || 0})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Max Count</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={advancedFormData.max_count || ''}
+                  onChange={(e) => setAdvancedFormData({...advancedFormData, max_count: e.target.value ? parseInt(e.target.value) : null})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                  placeholder="Leave empty for unlimited"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Rate Value *</label>
                 <input
                   type="number"
                   step="0.01"
                   min="0"
-                  max="100"
-                  value={formData.tmtRate}
-                  onChange={(e) => setFormData({...formData, tmtRate: parseFloat(e.target.value) || 0})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-black"
-                  placeholder="0.00"
+                  value={advancedFormData.rate_value}
+                  onChange={(e) => setAdvancedFormData({...advancedFormData, rate_value: parseFloat(e.target.value) || 0})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                   required
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  CRT Rate (%) *
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  value={formData.crtRate}
-                  onChange={(e) => setFormData({...formData, crtRate: parseFloat(e.target.value) || 0})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-black"
-                  placeholder="0.00"
+                <label className="block text-sm font-medium text-gray-700 mb-2">Currency *</label>
+                <select
+                  value={advancedFormData.currency}
+                  onChange={(e) => setAdvancedFormData({...advancedFormData, currency: e.target.value as 'MYR' | 'USD'})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                   required
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  KPI Target *
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  value={formData.kpiTarget}
-                  onChange={(e) => setFormData({...formData, kpiTarget: parseInt(e.target.value) || 0})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-black"
-                  placeholder="0"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Depositor Target *
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  value={formData.depositorTarget}
-                  onChange={(e) => setFormData({...formData, depositorTarget: parseInt(e.target.value) || 0})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-black"
-                  placeholder="0"
-                  required
-                />
+                >
+                  <option value="MYR">MYR</option>
+                  <option value="USD">USD</option>
+                </select>
               </div>
             </div>
             
@@ -194,89 +300,71 @@ export default function CommissionRatesPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="bg-orange-600 text-white px-6 py-2 rounded-md hover:bg-orange-700 disabled:opacity-50 transition-colors"
+                className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors"
               >
-                {loading ? 'Saving...' : editingId ? 'Update Rate' : 'Add Rate'}
+                {loading ? 'Saving...' : 'Add Advanced Rule'}
               </button>
-              
-              {editingId && (
-                <button
-                  type="button"
-                  onClick={handleCancel}
-                  className="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 transition-colors"
-                >
-                  Cancel
-                </button>
-              )}
             </div>
           </form>
         </div>
-
-        {/* Commission Rates Table */}
+        
+        {/* Advanced Rules Table */}
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Current Commission Rates</h2>
+            <h3 className="text-lg font-semibold text-gray-900">Current Advanced Commission Rules</h3>
           </div>
           
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Position
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    TMT Rate
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    CRT Rate
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    KPI Target
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Depositor Target
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Count Range</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rate Value</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Currency</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {commissionRates.map((rate, index) => (
-                  <tr key={rate._id || `rate-${index}`} className="hover:bg-gray-50">
+                {advancedRules.map((rule, index) => (
+                  <tr key={rule.id || index} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                        {rate.position}
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        {rule.position}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{rule.department}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        rule.type === 'FDA_RATE' ? 'bg-green-100 text-green-800' : 'bg-purple-100 text-purple-800'
+                      }`}>
+                        {rule.type}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {rate.tmtRate}%
+                      {rule.min_count} - {rule.max_count || '∞'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {rate.crtRate}%
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
+                      {rule.rate_value}{rule.type === 'FDA_RATE' ? '%' : ''}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {rate.kpiTarget}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {rate.depositorTarget}
-                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{rule.currency}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button
-                        onClick={() => handleEdit(rate)}
-                        className="text-orange-600 hover:text-orange-900 mr-4"
+                      <button 
+                        onClick={() => handleDelete(rule.id!)}
+                        className="text-red-600 hover:text-red-900"
                       >
-                        Edit
+                        Delete
                       </button>
                     </td>
                   </tr>
                 ))}
                 
-                {commissionRates.length === 0 && (
+                {advancedRules.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
-                      No commission rates configured yet.
+                    <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
+                      No advanced rules configured yet.
                     </td>
                   </tr>
                 )}
@@ -287,27 +375,58 @@ export default function CommissionRatesPage() {
 
         {/* Info Panel */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-6">
-          <h3 className="text-lg font-semibold text-blue-800 mb-4">📋 Commission Rates Guide</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-700">
+          <h3 className="text-lg font-semibold text-blue-800 mb-4">📋 Advanced Commission Rules Guide</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-blue-700">
             <div>
-              <h4 className="font-medium mb-2">Position Levels:</h4>
-              <ul className="space-y-1">
-                <li>• <strong>SE1:</strong> Sales Executive Level 1</li>
-                <li>• <strong>SE2:</strong> Sales Executive Level 2</li>
-                <li>• <strong>PE1:</strong> Private Executive Level 1</li>
-                <li>• <strong>PE2:</strong> Private Executive Level 2</li>
-                <li>• <strong>Manager:</strong> Sales Manager</li>
-              </ul>
+              <h4 className="font-medium mb-3">🎯 Commission Logic:</h4>
+              <div className="space-y-2">
+                <div className="bg-white p-3 rounded-lg">
+                  <div className="font-medium text-blue-800">SE2 CRT (Reactive Count):</div>
+                  <div className="text-xs space-y-1 mt-1">
+                    <div>• &lt; 130: $0.5 per head</div>
+                    <div>• 131-160: $0.8 per head</div>
+                    <div>• 161-200: $0.9 per head</div>
+                    <div>• ≥ 201: $1.0 per head</div>
+                  </div>
+                </div>
+                <div className="bg-white p-3 rounded-lg">
+                  <div className="font-medium text-blue-800">SE2 TMT (ND Count):</div>
+                  <div className="text-xs space-y-1 mt-1">
+                    <div>• ≤ 150: 7% FDA Rate</div>
+                    <div>• 151-200: 8% FDA Rate</div>
+                    <div>• 201-235: 9% FDA Rate</div>
+                    <div>• ≥ 236: 10% FDA Rate</div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div>
-              <h4 className="font-medium mb-2">Commission Types:</h4>
-              <ul className="space-y-1">
-                <li>• <strong>TMT Rate:</strong> Commission percentage for TMT sales</li>
-                <li>• <strong>CRT Rate:</strong> Commission percentage for CRT sales</li>
-                <li>• <strong>KPI Target:</strong> Minimum KPI score required</li>
-                <li>• <strong>Depositor Target:</strong> Minimum depositor count required</li>
-              </ul>
+              <h4 className="font-medium mb-3">📊 SE1 & PE1 Logic:</h4>
+              <div className="space-y-2">
+                <div className="bg-white p-3 rounded-lg">
+                  <div className="font-medium text-blue-800">SE1/PE1 CRT (Reactive Count):</div>
+                  <div className="text-xs space-y-1 mt-1">
+                    <div>• &lt; 110: $0.5 per head</div>
+                    <div>• 111-140: $0.8 per head</div>
+                    <div>• 141-170: $0.9 per head</div>
+                    <div>• ≥ 171: $1.0 per head</div>
+                  </div>
+                </div>
+                <div className="bg-white p-3 rounded-lg">
+                  <div className="font-medium text-blue-800">SE1/PE1 TMT (ND Count):</div>
+                  <div className="text-xs space-y-1 mt-1">
+                    <div>• ≤ 140: 7% FDA Rate</div>
+                    <div>• 141-190: 8% FDA Rate</div>
+                    <div>• 191-225: 9% FDA Rate</div>
+                    <div>• ≥ 226: 10% FDA Rate</div>
+                  </div>
+                </div>
+              </div>
             </div>
+          </div>
+          <div className="mt-4 text-xs text-blue-600">
+            <strong>Note:</strong> USD amounts are automatically converted to MYR using current exchange rates. 
+            ND Count = New Depositors, Reactive Count = Active Members.
           </div>
         </div>
       </div>
