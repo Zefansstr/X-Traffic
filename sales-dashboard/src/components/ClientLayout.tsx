@@ -17,17 +17,29 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // PENTING: Semua hooks harus dipanggil sebelum conditional return
-  // Listen for sidebar toggle events from Navigation component
+  // Initialize and listen for sidebar toggle events from Navigation component
   useEffect(() => {
-    const handleSidebarToggle = () => {
-      setSidebarCollapsed(prev => !prev);
+    // Load initial sidebar state from localStorage
+    const savedCollapsedState = localStorage.getItem('sidebarCollapsed');
+    if (savedCollapsedState !== null) {
+      const collapsed = JSON.parse(savedCollapsedState);
+      setSidebarCollapsed(collapsed);
+      console.log('🔧 ClientLayout: Loaded sidebar state from localStorage:', collapsed);
+    }
+
+    const handleSidebarToggle = (event: CustomEvent) => {
+      const newCollapsedState = event.detail?.isCollapsed;
+      if (newCollapsedState !== undefined) {
+        setSidebarCollapsed(newCollapsedState);
+        console.log('🔧 ClientLayout: Sidebar state updated from Navigation:', newCollapsedState);
+      }
     };
 
     // Listen for custom event from Navigation
-    window.addEventListener('sidebarToggled', handleSidebarToggle);
+    window.addEventListener('sidebarToggled', handleSidebarToggle as EventListener);
     
     return () => {
-      window.removeEventListener('sidebarToggled', handleSidebarToggle);
+      window.removeEventListener('sidebarToggled', handleSidebarToggle as EventListener);
     };
   }, []);
 

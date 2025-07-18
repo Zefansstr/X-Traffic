@@ -24,11 +24,27 @@ export default function Navigation() {
   // All useEffect hooks must be called in the same order every render
   useEffect(() => {
     setIsClient(true);
+    
+    // Load sidebar state from localStorage
+    const savedCollapsedState = localStorage.getItem('sidebarCollapsed');
+    if (savedCollapsedState !== null) {
+      const collapsed = JSON.parse(savedCollapsedState);
+      setIsCollapsed(collapsed);
+      console.log('🔧 Navigation: Loaded sidebar state from localStorage:', collapsed);
+    }
   }, []);
 
-  // Notify ClientLayout when sidebar state changes - always call this hook
+  // Notify ClientLayout when sidebar state changes and save to localStorage
   useEffect(() => {
-    window.dispatchEvent(new CustomEvent('sidebarToggled'));
+    // Save to localStorage
+    localStorage.setItem('sidebarCollapsed', JSON.stringify(isCollapsed));
+    
+    // Notify ClientLayout
+    window.dispatchEvent(new CustomEvent('sidebarToggled', { 
+      detail: { isCollapsed } 
+    }));
+    
+    console.log('🔧 Navigation: Sidebar state changed to:', isCollapsed);
   }, [isCollapsed]);
 
   // DEBUG: Log user data when it changes
