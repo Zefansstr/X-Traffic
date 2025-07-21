@@ -28,11 +28,14 @@ export default function Home() {
   };
 
   const handleEditSale = (sale: any) => {
-    console.log('🔧 Edit sale clicked:', sale);
-    // Simpan data ke localStorage agar dapat di-load oleh modal global
+    console.log('🔧 Edit sale clicked from dashboard:', sale);
+    // Save edit data to localStorage for global modal
     localStorage.setItem('editSaleData', JSON.stringify(sale));
-    // Buka modal
-    window.dispatchEvent(new CustomEvent('openNewCustomerModal'));
+    
+    // Small delay to ensure localStorage is written before modal opens
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('openNewCustomerModal'));
+    }, 50);
   };
 
   const handleDeleteSale = async (saleId: string) => {

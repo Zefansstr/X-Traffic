@@ -110,10 +110,14 @@ export default function MemberPage() {
 
   // Edit and Delete handlers
   const handleEditSale = (sale: Sale) => {
-    console.log('🔧 Edit sale clicked:', sale);
-    // Redirect to dashboard with edit data
+    console.log('🔧 Edit sale clicked from member page:', sale);
+    // Save edit data to localStorage and open modal directly (no redirect)
     localStorage.setItem('editSaleData', JSON.stringify(sale));
-    window.location.href = '/?edit=' + sale._id;
+    
+    // Small delay to ensure localStorage is written before modal opens
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('openNewCustomerModal'));
+    }, 50);
   };
 
   const handleDeleteSale = async (saleId: string) => {
@@ -267,6 +271,19 @@ export default function MemberPage() {
   useEffect(() => {
     fetchSales();
     fetchStaff();
+    
+    // Add event listener for customer refresh after edit
+    const handleCustomerUpdated = () => {
+      console.log('🔄 Customer updated, refreshing member data...');
+      fetchSales(); // Refresh the sales data
+    };
+
+    window.addEventListener('customerAdded', handleCustomerUpdated);
+
+    // Cleanup event listener
+    return () => {
+      window.removeEventListener('customerAdded', handleCustomerUpdated);
+    };
   }, []);
 
   useEffect(() => {
