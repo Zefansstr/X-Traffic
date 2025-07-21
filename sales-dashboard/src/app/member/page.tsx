@@ -51,6 +51,7 @@ interface Sale {
 
 interface Staff {
   _id: string;
+  id: string;
   name: string;
   position: string;
 }
@@ -161,17 +162,69 @@ export default function MemberPage() {
 
     // Filter by staff
     if (filters.staffId) {
+      console.log('🔍 Staff Filter Debug:');
+      console.log('  Selected staffId from filter:', filters.staffId);
+      console.log('  Total sales before filter:', filtered.length);
+      
       filtered = filtered.filter(sale => {
-        const sid = typeof sale.staffId === 'string' ? sale.staffId : sale.staffId?._id;
-        return sid === filters.staffId;
+        // Handle both string and object formats of staffId
+        let saleStaffId;
+        if (typeof sale.staffId === 'string') {
+          saleStaffId = sale.staffId;
+        } else if (sale.staffId && sale.staffId._id) {
+          saleStaffId = sale.staffId._id;
+        } else {
+          saleStaffId = null;
+        }
+        
+        const matches = saleStaffId === filters.staffId;
+        if (matches) {
+          console.log('  ✅ Match found:', { 
+            customer: sale.customerName, 
+            saleStaffId, 
+            filterStaffId: filters.staffId 
+          });
+        }
+        
+        return matches;
       });
+      
+      console.log('  Total sales after filter:', filtered.length);
     }
 
-    // Filter by customer name
+    // Filter by customer name (supports multiple keywords)
     if (filters.customerName) {
-      filtered = filtered.filter(sale => 
-        sale.customerName.toLowerCase().includes(filters.customerName.toLowerCase())
-      );
+      console.log('🔍 Customer Name Filter Debug:');
+      console.log('  Search query:', filters.customerName);
+      console.log('  Total sales before filter:', filtered.length);
+      
+      // Split search terms by spaces and remove empty strings
+      const searchTerms = filters.customerName.toLowerCase()
+        .split(' ')
+        .filter(term => term.trim().length > 0);
+      
+      console.log('  Search terms:', searchTerms);
+      
+      filtered = filtered.filter(sale => {
+        const customerName = sale.customerName.toLowerCase();
+        
+        // Check if ALL search terms are found in customer name (AND logic)
+        const allTermsFound = searchTerms.every(term => 
+          customerName.includes(term)
+        );
+        
+        if (allTermsFound) {
+          console.log('  ✅ Match found:', {
+            customer: sale.customerName,
+            searchTerms,
+            matchedAll: allTermsFound
+          });
+        }
+        
+        return allTermsFound;
+      });
+      
+      console.log('  Total sales after filter:', filtered.length);
     }
 
     // Filter by amount range
@@ -271,7 +324,7 @@ export default function MemberPage() {
               >
                 <option value="">All Staff</option>
                 {staffList.map((staff, index) => (
-                  <option key={staff._id || `staff-${index}`} value={staff._id}>
+                  <option key={staff.id || `staff-${index}`} value={staff.id}>
                     {staff.name}
                   </option>
                 ))}
@@ -285,7 +338,7 @@ export default function MemberPage() {
               </label>
               <input
                 type="text"
-                placeholder="Search customer..."
+                placeholder="Search customer... (multiple keywords supported)"
                 value={filters.customerName}
                 onChange={(e) => handleFilterChange('customerName', e.target.value)}
                 className="w-full px-2 py-1.5 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
