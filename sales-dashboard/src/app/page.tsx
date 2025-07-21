@@ -31,8 +31,6 @@ export default function Home() {
     console.log('🔧 Edit sale clicked:', sale);
     // Simpan data ke localStorage agar dapat di-load oleh modal global
     localStorage.setItem('editSaleData', JSON.stringify(sale));
-    // Tambahkan query param agar konsisten dengan halaman lain (opsional)
-    window.history.replaceState({}, '', `/?edit=${sale._id}`);
     // Buka modal
     window.dispatchEvent(new CustomEvent('openNewCustomerModal'));
   };
@@ -112,15 +110,15 @@ export default function Home() {
     
     if (editSaleData && editId) {
       try {
-        const sale = JSON.parse(editSaleData);
-        console.log('🔧 Editing sale from member page:', sale);
-        handleEditSale(sale);
+        console.log('🔧 Editing sale from member page, opening modal...');
         
-        // Clean up
-        localStorage.removeItem('editSaleData');
-        window.history.replaceState({}, '', '/'); // Remove edit param from URL
+        // Clean up URL
+        window.history.replaceState({}, '', '/'); 
+        
+        // Trigger modal (localStorage data will be picked up by modal)
+        window.dispatchEvent(new CustomEvent('openNewCustomerModal'));
       } catch (error) {
-        console.error('Error parsing edit sale data:', error);
+        console.error('Error handling edit from member page:', error);
         localStorage.removeItem('editSaleData');
       }
     }

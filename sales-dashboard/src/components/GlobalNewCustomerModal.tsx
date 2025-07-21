@@ -19,6 +19,9 @@ export default function GlobalNewCustomerModal({
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   
+  // Local edit state - will be used when global event triggers
+  const [currentEditingSale, setCurrentEditingSale] = useState<any>(null);
+  
   // Dropdown data
   const [staffList, setStaffList] = useState<any[]>([]);
   const [departmentList, setDepartmentList] = useState<any[]>([]);
@@ -43,29 +46,68 @@ export default function GlobalNewCustomerModal({
 
   // Use props if provided, otherwise use global events
   const isModalOpen = propIsOpen !== undefined ? propIsOpen : showModal;
+  
+  // Determine which edit data to use: props or local state
+  const activeEditingSale = editingSale || currentEditingSale;
 
   // Update form data when editing sale changes
   useEffect(() => {
-    if (editingSale && isModalOpen) {
+    if (activeEditingSale && isModalOpen) {
+      console.log('🔧 Loading edit data into form:', activeEditingSale);
       setFormData({
-        customerName: editingSale.customerName || '',
-        phone: editingSale.phone || '',
-        amount: editingSale.amount?.toString() || '',
-        staff: editingSale.staffId?._id || '',
-        agent: editingSale.agentId?._id || '',
-        traffic: editingSale.trafficId?._id || '',
-        device: editingSale.deviceId?._id || '',
-        game: editingSale.gameId?._id || '',
-        department: editingSale.type || '',
-        notes: editingSale.notes || '',
+        customerName: activeEditingSale.customerName || '',
+        phone: activeEditingSale.phone || '',
+        amount: activeEditingSale.amount?.toString() || '',
+        staff: activeEditingSale.staffId?._id || activeEditingSale.staffId?.id || activeEditingSale.staffId || '',
+        agent: activeEditingSale.agentId?._id || activeEditingSale.agentId?.id || activeEditingSale.agentId || '',
+        traffic: activeEditingSale.trafficId?._id || activeEditingSale.trafficId?.id || activeEditingSale.trafficId || '',
+        device: activeEditingSale.deviceId?._id || activeEditingSale.deviceId?.id || activeEditingSale.deviceId || '',
+        game: activeEditingSale.gameId?._id || activeEditingSale.gameId?.id || activeEditingSale.gameId || '',
+        department: activeEditingSale.type || activeEditingSale.department || '',
+        notes: activeEditingSale.notes || '',
+      });
+    } else if (!activeEditingSale && isModalOpen) {
+      // Reset form for new customer
+      console.log('🆕 Resetting form for new customer');
+      setFormData({
+        customerName: '',
+        phone: '',
+        amount: '',
+        staff: '',
+        agent: '',
+        traffic: '',
+        device: '',
+        game: '',
+        department: '',
+        notes: '',
       });
     }
-  }, [editingSale, isModalOpen]);
+  }, [activeEditingSale, isModalOpen]);
 
   // Listen for global event to open modal (only when no props provided)
   useEffect(() => {
     if (propIsOpen === undefined) {
       const handleOpenModal = () => {
+        console.log('🚀 Global modal opening...');
+        
+        // Check for edit data in localStorage
+        const editSaleData = localStorage.getItem('editSaleData');
+        if (editSaleData) {
+          try {
+            const saleData = JSON.parse(editSaleData);
+            console.log('📝 Found edit data in localStorage:', saleData);
+            setCurrentEditingSale(saleData);
+            localStorage.removeItem('editSaleData'); // Clean up after use
+          } catch (error) {
+            console.error('Error parsing edit sale data:', error);
+            localStorage.removeItem('editSaleData');
+            setCurrentEditingSale(null);
+          }
+        } else {
+          console.log('🆕 No edit data found, opening as new customer');
+          setCurrentEditingSale(null);
+        }
+        
         setShowModal(true);
         fetchDropdownData(); // Load fresh data when modal opens
       };
@@ -156,6 +198,9 @@ export default function GlobalNewCustomerModal({
       notes: '',
     });
     
+    // Clear edit state
+    setCurrentEditingSale(null);
+    
     // Close modal immediately - no delay
     if (propOnClose) {
       console.log('📞 Calling propOnClose() immediately...');
@@ -185,21 +230,22 @@ export default function GlobalNewCustomerModal({
       // Handle phone data based on user permission and mode
       let submitData;
       
-      if (editingSale && !canManagePhone()) {
+      if (activeEditingSale && !canManagePhone()) {
         // If editing and user can't manage phone, keep original phone (field was hidden)
-        submitData = { ...formData, phone: editingSale.phone || '' };
+        submitData = { ...formData, phone: activeEditingSale.phone || '' };
       } else {
         // New customer or admin/manager editing - use form data
         submitData = { ...formData };
       }
       
       console.log('Submitting form data:', submitData);
+      console.log('Active editing sale:', activeEditingSale);
       
-      const url = editingSale ? `/api/sales/${editingSale._id}` : '/api/sales';
-      const method = editingSale ? 'PUT' : 'POST';
+      const url = activeEditingSale ? `/api/sales/${activeEditingSale._id}` : '/api/sales';
+      const method = activeEditingSale ? 'PUT' : 'POST';
       
-      const payload = editingSale 
-        ? { ...submitData, id: editingSale._id }
+      const payload = activeEditingSale 
+        ? { ...submitData, id: activeEditingSale._id }
         : submitData;
       
       const response = await fetch(url, {
@@ -236,6 +282,9 @@ export default function GlobalNewCustomerModal({
           department: '',
           notes: '',
         });
+        
+        // Clear edit state
+        setCurrentEditingSale(null);
         
         // Close modal - direct approach for dashboard
         if (propOnClose) {
@@ -277,7 +326,7 @@ export default function GlobalNewCustomerModal({
           <div>
             <h2 className="text-lg font-semibold text-gray-900 flex items-center">
               <div className="w-3 h-3 rounded-full mr-2 bg-blue-500"></div>
-              {editingSale ? 'Edit Customer' : 'New Customer'}
+              {activeEditingSale ? 'Edit Customer' : 'New Customer'}
             </h2>
           </div>
           <button
@@ -351,7 +400,7 @@ export default function GlobalNewCustomerModal({
             </div>
 
             {/* Phone Number - Only show for new customer OR admin/manager in edit mode */}
-            {(!editingSale || canManagePhone()) && (
+            {(!activeEditingSale || canManagePhone()) && (
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">
                   Phone <span className="text-red-500">*</span>
@@ -500,7 +549,7 @@ export default function GlobalNewCustomerModal({
                 className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 text-sm font-medium shadow-sm"
               >
                 {submitting ? 'Saving...' : (
-                  editingSale ? 'Update Customer' : 'Save Customer'
+                  activeEditingSale ? 'Update Customer' : 'Save Customer'
                 )}
               </button>
             </div>
