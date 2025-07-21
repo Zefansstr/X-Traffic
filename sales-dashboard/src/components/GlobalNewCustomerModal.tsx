@@ -52,9 +52,14 @@ export default function GlobalNewCustomerModal({
 
   // Update form data when editing sale changes
   useEffect(() => {
+    console.log('🔄 Form update effect triggered');
+    console.log('🔍 activeEditingSale:', activeEditingSale);
+    console.log('🔍 isModalOpen:', isModalOpen);
+    
     if (activeEditingSale && isModalOpen) {
       console.log('🔧 Loading edit data into form:', activeEditingSale);
-      setFormData({
+      
+      const newFormData = {
         customerName: activeEditingSale.customerName || '',
         phone: activeEditingSale.phone || '',
         amount: activeEditingSale.amount?.toString() || '',
@@ -65,7 +70,11 @@ export default function GlobalNewCustomerModal({
         game: activeEditingSale.gameId?._id || activeEditingSale.gameId?.id || activeEditingSale.gameId || '',
         department: activeEditingSale.type || activeEditingSale.department || '',
         notes: activeEditingSale.notes || '',
-      });
+      };
+      
+      console.log('📝 New form data:', newFormData);
+      setFormData(newFormData);
+      console.log('✅ Form data set for edit mode');
     } else if (!activeEditingSale && isModalOpen) {
       // Reset form for new customer
       console.log('🆕 Resetting form for new customer');
@@ -81,6 +90,7 @@ export default function GlobalNewCustomerModal({
         department: '',
         notes: '',
       });
+      console.log('✅ Form data reset for new customer mode');
     }
   }, [activeEditingSale, isModalOpen]);
 
@@ -92,12 +102,17 @@ export default function GlobalNewCustomerModal({
         
         // Check for edit data in localStorage
         const editSaleData = localStorage.getItem('editSaleData');
+        console.log('🔍 localStorage editSaleData:', editSaleData);
+        
         if (editSaleData) {
           try {
             const saleData = JSON.parse(editSaleData);
             console.log('📝 Found edit data in localStorage:', saleData);
+            console.log('📝 Setting currentEditingSale...');
             setCurrentEditingSale(saleData);
-            localStorage.removeItem('editSaleData'); // Clean up after use
+            
+            // Don't remove localStorage immediately - wait for form to be filled
+            console.log('⏱️ Edit data set, modal will open in edit mode');
           } catch (error) {
             console.error('Error parsing edit sale data:', error);
             localStorage.removeItem('editSaleData');
@@ -126,6 +141,14 @@ export default function GlobalNewCustomerModal({
       fetchDropdownData();
     }
   }, [isModalOpen]);
+
+  // Clean up localStorage after form is filled (only when editing)
+  useEffect(() => {
+    if (activeEditingSale && isModalOpen && formData.customerName) {
+      console.log('🧹 Form filled with edit data, cleaning up localStorage...');
+      localStorage.removeItem('editSaleData');
+    }
+  }, [activeEditingSale, isModalOpen, formData.customerName]);
 
   // Check if user can view/edit phone numbers
   const canManagePhone = () => {
@@ -226,6 +249,11 @@ export default function GlobalNewCustomerModal({
     e.preventDefault();
     setSubmitting(true);
     
+    console.log('🚀 Form submission started');
+    console.log('📊 Current form data:', formData);
+    console.log('🔍 Active editing sale:', activeEditingSale);
+    console.log('🔍 Is edit mode:', !!activeEditingSale);
+    
     try {
       // Handle phone data based on user permission and mode
       let submitData;
@@ -233,20 +261,25 @@ export default function GlobalNewCustomerModal({
       if (activeEditingSale && !canManagePhone()) {
         // If editing and user can't manage phone, keep original phone (field was hidden)
         submitData = { ...formData, phone: activeEditingSale.phone || '' };
+        console.log('📞 Using original phone (no permission to edit):', activeEditingSale.phone);
       } else {
         // New customer or admin/manager editing - use form data
         submitData = { ...formData };
+        console.log('📞 Using form phone data');
       }
       
-      console.log('Submitting form data:', submitData);
-      console.log('Active editing sale:', activeEditingSale);
+      console.log('📤 Final submit data:', submitData);
       
       const url = activeEditingSale ? `/api/sales/${activeEditingSale._id}` : '/api/sales';
       const method = activeEditingSale ? 'PUT' : 'POST';
       
+      console.log('🌐 API request:', { method, url });
+      
       const payload = activeEditingSale 
         ? { ...submitData, id: activeEditingSale._id }
         : submitData;
+        
+      console.log('📦 API payload:', payload);
       
       const response = await fetch(url, {
         method: method,
@@ -326,7 +359,11 @@ export default function GlobalNewCustomerModal({
           <div>
             <h2 className="text-lg font-semibold text-gray-900 flex items-center">
               <div className="w-3 h-3 rounded-full mr-2 bg-blue-500"></div>
-              {activeEditingSale ? 'Edit Customer' : 'New Customer'}
+              {(() => {
+                const title = activeEditingSale ? 'Edit Customer' : 'New Customer';
+                console.log('🏷️ Modal title:', title, '(activeEditingSale:', !!activeEditingSale, ')');
+                return title;
+              })()}
             </h2>
           </div>
           <button
