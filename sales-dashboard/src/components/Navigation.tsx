@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { canUserAccessMenu, type User } from '../lib/models/User';
 import { useAuth } from '../lib/hooks/useAuth';
+import XLogo from './XLogo';
 import { 
   DashboardIcon, 
   MemberIcon, 
@@ -166,8 +167,9 @@ export default function Navigation() {
       {/* Logo & Title with Toggle */}
       <div className="flex items-center justify-between border-b border-gray-200" style={{ height: '56px' }}>
         <div className={`flex items-center space-x-2 ${isCollapsed ? 'pl-2' : 'pl-4'}`}>
+          {/* Logo - Ganti dengan image atau SVG custom */}
           <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-soft">
-            <span className="text-base font-extrabold -skew-x-12 text-white">X</span>
+            <XLogo size="md" />
           </div>
           {!isCollapsed && (
             <span className="text-lg font-semibold tracking-wide text-gray-900">Traffic</span>

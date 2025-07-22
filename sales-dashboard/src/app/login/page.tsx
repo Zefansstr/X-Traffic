@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import XLogo from '@/components/XLogo';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -104,16 +105,14 @@ export default function LoginPage() {
       <div className="relative z-10 w-full max-w-sm mx-auto px-6 scale-90">
         {/* Logo and Title */}
         <div className="text-center mb-8">
-          {/* Logo - diperkecil */}
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl mb-6 shadow-2xl">
-            <div className="text-white text-2xl font-bold">
-              X
-            </div>
+          {/* Logo X Putih dengan Background Biru */}
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl mb-6 shadow-2xl">
+            <XLogo size="lg" />
           </div>
           
-          {/* Title - diubah ke X-Traffic */}
+          {/* Title - X-Traffic Solution */}
           <h1 className="text-white text-lg font-medium tracking-wider">
-            X-Traffic
+            X-Traffic Solution
           </h1>
         </div>
 
